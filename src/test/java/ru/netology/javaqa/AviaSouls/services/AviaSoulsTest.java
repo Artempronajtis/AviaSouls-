@@ -61,5 +61,45 @@ public class AviaSoulsTest {
         assertArrayEquals(expected, result);
     }
 
+    @Test
+    public void testSearchMultipleTickets() {
+        AviaSouls manager = new AviaSouls();
+        manager.add(new Ticket("A", "B", 100, 800, 1000));
+        manager.add(new Ticket("A", "B", 200, 1200, 1400));
+        manager.add(new Ticket("A", "B", 150, 900, 1100));
+
+        Ticket[] expected = {
+                new Ticket("A", "B", 100, 800, 1000),
+                new Ticket("A", "B", 150, 900, 1100),
+                new Ticket("A", "B", 200, 1200, 1400)
+        };
+
+        Ticket[] result = manager.search("A", "B");
+
+        assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void testSearchOneTicket() {
+        AviaSouls manager = new AviaSouls();
+        manager.add(new Ticket("A", "B", 100, 800, 1000));
+
+        Ticket[] expected = {new Ticket("A", "B", 100, 800, 1000)};
+        Ticket[] result = manager.search("A", "B");
+
+        assertArrayEquals(expected, result);
+    }
+
+    @Test
+    public void testSearchZeroTickets() {
+        AviaSouls manager = new AviaSouls();
+        manager.add(new Ticket("C", "D", 200, 1200, 1400));
+
+        Ticket[] expected = {};
+        Ticket[] result = manager.search("A", "B");
+
+        assertArrayEquals(expected, result);
+    }
+
 
 }
