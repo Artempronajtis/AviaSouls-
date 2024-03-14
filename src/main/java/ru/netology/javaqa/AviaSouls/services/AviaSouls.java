@@ -52,6 +52,7 @@ public class AviaSouls {
                 }
             }
         }
+        Arrays.sort(result, Comparator.comparingInt(Ticket::getPrice));
         return result;
     }
 

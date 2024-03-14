@@ -43,5 +43,23 @@ public class AviaSoulsTest {
         assertArrayEquals(expectedCD, resultCD);
     }
 
+    @Test
+    public void testSearch() {
+        AviaSouls manager = new AviaSouls();
+        manager.add(new Ticket("A", "B", 200, 800, 1000));
+        manager.add(new Ticket("A", "B", 100, 1200, 1400));
+        manager.add(new Ticket("A", "B", 150, 900, 1100));
+
+        Ticket[] expected = {
+                new Ticket("A", "B", 100, 1200, 1400),
+                new Ticket("A", "B", 150, 900, 1100),
+                new Ticket("A", "B", 200, 800, 1000)
+        };
+
+        Ticket[] result = manager.search("A", "B");
+
+        assertArrayEquals(expected, result);
+    }
+
 
 }
