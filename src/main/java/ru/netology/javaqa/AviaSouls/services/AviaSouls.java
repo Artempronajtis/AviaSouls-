@@ -52,13 +52,20 @@ public class AviaSouls {
                 }
             }
         }
-        Arrays.sort(result, Comparator.comparingInt(Ticket::getPrice));
+        Arrays.sort(result);
         return result;
     }
 
     public Ticket[] searchAndSortBy(String from, String to, Comparator<Ticket> comparator) {
-        Ticket[] result = search(from, to);
-        Arrays.sort(result, comparator);
+        Ticket[] result = new Ticket[0];
+        for (Ticket ticket : tickets) {
+            if (ticket.getFrom().equals(from)) {
+                if (ticket.getTo().equals(to)) {
+                    result = addToArray(result, ticket);
+                }
+            }
+        }
+        Arrays.sort(tickets, comparator);
         return result;
     }
 }

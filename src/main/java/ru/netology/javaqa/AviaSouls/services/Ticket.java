@@ -40,6 +40,18 @@ public class Ticket implements Comparable<Ticket> {
 
     // Вспомогательные методы для корректной работы equals
     @Override
+    public int compareTo(Ticket o) {
+        if (this.price < o.price) {
+            return -1;
+        } else if (this.price > o.price) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -50,10 +62,5 @@ public class Ticket implements Comparable<Ticket> {
     @Override
     public int hashCode() {
         return Objects.hash(from, to, price, timeFrom, timeTo);
-    }
-
-    @Override
-    public int compareTo(Ticket otherTicket) {
-        return Integer.compare(this.price, otherTicket.price);
     }
 }

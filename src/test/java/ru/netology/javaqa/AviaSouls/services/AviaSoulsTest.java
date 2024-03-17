@@ -1,104 +1,108 @@
 package ru.netology.javaqa.AviaSouls.services;
 
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AviaSoulsTest {
-    @Test
-    public void testTicketCompareTo() {
-        Ticket ticket1 = new Ticket("A", "B", 100, 800, 1000);
-        Ticket ticket2 = new Ticket("C", "D", 200, 1200, 1400);
 
-        assertTrue(ticket1.compareTo(ticket2) < 0);
+    Ticket tickets1 = new Ticket("7UP", "Аврора", 1_000, 13, 17);
+    Ticket tickets2 = new Ticket("7UP", "Аврора", 500, 12, 14);
+    Ticket tickets3 = new Ticket("7UP", "Аврора", 7_000, 11, 13);
+    Ticket tickets4 = new Ticket("7UP", "Аврора", 2_000, 15, 16);
+    Ticket tickets5 = new Ticket("7UP", "Аврора", 1_000, 9, 10);
+    Ticket tickets6 = new Ticket("Глобус", "Сапсан", 2_500, 2, 19);
+    Ticket tickets7 = new Ticket("Глобус", "Сапсан", 1_000, 3, 15);
+
+    @Test
+    public void shouldCompareByPrice() {
+
+        int expectedMore = 1;
+        int actualMore = tickets1.compareTo(tickets2);
+        int expectedLess = -1;
+        int actualLess = tickets4.compareTo(tickets3);
+        int expectedEquals = 0;
+        int actualEquals = tickets5.compareTo(tickets1);
+
+        Assertions.assertEquals(expectedMore, actualMore);
+        Assertions.assertEquals(expectedLess, actualLess);
+        Assertions.assertEquals(expectedEquals, actualEquals);
     }
 
     @Test
-    public void testTicketTimeComparator() {
-        TicketTimeComparator comparator = new TicketTimeComparator();
-        Ticket ticket1 = new Ticket("A", "B", 100, 800, 1000);
-        Ticket ticket2 = new Ticket("C", "D", 200, 1200, 1400);
-        Ticket ticket3 = new Ticket("E", "F", 150, 900, 1100);
+    public void shouldSortByPrice() {
+        AviaSouls service = new AviaSouls();
 
-        assertTrue(comparator.compare(ticket1, ticket2) == 0);
-        assertTrue(comparator.compare(ticket1, ticket3) == 0);
-        assertTrue(comparator.compare(ticket2, ticket3) == 0);
+        service.add(tickets1);
+        service.add(tickets2);
+        service.add(tickets3);
+        service.add(tickets4);
+
+        Ticket[] expected = {tickets2, tickets1, tickets4, tickets3};
+        Ticket[] actual = service.search("7UP", "Аврора");
+
+        Assertions.assertArrayEquals(expected, actual);
     }
 
     @Test
-    public void testSearchAndSortBy() {
-        AviaSouls manager = new AviaSouls();
-        manager.add(new Ticket("A", "B", 100, 800, 1000));
-        manager.add(new Ticket("C", "D", 200, 1200, 1400));
-        manager.add(new Ticket("E", "F", 150, 900, 1100));
+    public void shouldCompareTime() {
+        TicketTimeComparator comp = new TicketTimeComparator();
 
-        Ticket[] expectedAB = {new Ticket("A", "B", 100, 800, 1000)};
-        Ticket[] expectedCD = {new Ticket("C", "D", 200, 1200, 1400)};
-
-        Ticket[] resultAB = manager.search("A", "B");
-        Ticket[] resultCD = manager.search("C", "D");
-
-        assertArrayEquals(expectedAB, resultAB);
-        assertArrayEquals(expectedCD, resultCD);
+        int expectedMore = 1;
+        int actualMore = comp.compare(tickets2, tickets5);
+        int expectedLess = -1;
+        int actualLess = comp.compare(tickets4, tickets1);
+        int expectedEquals = 0;
+        int actualEquals = comp.compare(tickets4, tickets5);
     }
 
     @Test
-    public void testSearch() {
-        AviaSouls manager = new AviaSouls();
-        manager.add(new Ticket("A", "B", 200, 800, 1000));
-        manager.add(new Ticket("A", "B", 100, 1200, 1400));
-        manager.add(new Ticket("A", "B", 150, 900, 1100));
+    public void shouldFindWithComparator() {
+        TicketTimeComparator comp = new TicketTimeComparator();
+        AviaSouls service = new AviaSouls();
 
-        Ticket[] expected = {
-                new Ticket("A", "B", 100, 1200, 1400),
-                new Ticket("A", "B", 150, 900, 1100),
-                new Ticket("A", "B", 200, 800, 1000)
-        };
+        service.add(tickets1);
+        service.add(tickets2);
+        service.add(tickets6);
 
-        Ticket[] result = manager.search("A", "B");
-
-        assertArrayEquals(expected, result);
+        Ticket[] expected = {tickets2, tickets1};
+        Ticket[] actual = service.searchAndSortBy("7UP", "Аврора", comp);
     }
 
     @Test
-    public void testSearchMultipleTickets() {
-        AviaSouls manager = new AviaSouls();
-        manager.add(new Ticket("A", "B", 100, 800, 1000));
-        manager.add(new Ticket("A", "B", 200, 1200, 1400));
-        manager.add(new Ticket("A", "B", 150, 900, 1100));
+    public void shouldFindWithoutComparatorSomeTickets() {
+        AviaSouls service = new AviaSouls();
 
-        Ticket[] expected = {
-                new Ticket("A", "B", 100, 800, 1000),
-                new Ticket("A", "B", 150, 900, 1100),
-                new Ticket("A", "B", 200, 1200, 1400)
-        };
+        service.add(tickets1);
+        service.add(tickets2);
+        service.add(tickets7);
 
-        Ticket[] result = manager.search("A", "B");
-
-        assertArrayEquals(expected, result);
+        Ticket[] expected = {tickets1, tickets2};
+        Ticket[] actual = service.search("7UP", "Аврора");
     }
 
     @Test
-    public void testSearchOneTicket() {
-        AviaSouls manager = new AviaSouls();
-        manager.add(new Ticket("A", "B", 100, 800, 1000));
+    public void shouldFindWithoutComparatorOneTicket() {
+        AviaSouls service = new AviaSouls();
 
-        Ticket[] expected = {new Ticket("A", "B", 100, 800, 1000)};
-        Ticket[] result = manager.search("A", "B");
+        service.add(tickets1);
+        service.add(tickets6);
+        service.add(tickets7);
 
-        assertArrayEquals(expected, result);
+        Ticket[] expected = {tickets1};
+        Ticket[] actual = service.search("7UP", "Аврора");
     }
 
     @Test
-    public void testSearchZeroTickets() {
-        AviaSouls manager = new AviaSouls();
-        manager.add(new Ticket("C", "D", 200, 1200, 1400));
+    public void shouldNotFindTicketsWithoutComparator() {
+        AviaSouls service = new AviaSouls();
+
+        service.add(tickets6);
+        service.add(tickets7);
 
         Ticket[] expected = {};
-        Ticket[] result = manager.search("A", "B");
-
-        assertArrayEquals(expected, result);
+        Ticket[] actual = service.search("7UP", "Аврора");
     }
 
 
